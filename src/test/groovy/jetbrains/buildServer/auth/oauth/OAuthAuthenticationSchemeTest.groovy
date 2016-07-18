@@ -21,7 +21,7 @@ class OAuthAuthenticationSchemeTest extends Specification {
         LoginConfiguration loginConfiguration = Mock()
         PluginDescriptor pluginDescriptor = Mock()
         ServerPrincipalFactory principalFactory = Mock() {
-            getServerPrincipal(_, _) >> { String userName, _ -> new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName) }
+            getServerPrincipal(_, _, _) >> { String userName, e, _ -> new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, userName) }
         }
         scheme = new OAuthAuthenticationScheme(loginConfiguration, pluginDescriptor, principalFactory, client)
     }

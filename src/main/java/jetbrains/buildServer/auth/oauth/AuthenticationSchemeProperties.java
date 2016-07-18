@@ -39,6 +39,21 @@ public class AuthenticationSchemeProperties {
         return getProperty(ConfigKey.userEndpoint);
     }
 
+    public boolean allowMatchingUsersByEmail() {
+        String property = getProperty(ConfigKey.allowMatchingUsersByEmail);
+        return property != null && Boolean.parseBoolean(property);
+    }
+
+    @Nullable
+    public String getEmailsEndpoint() {
+        return getProperty(ConfigKey.emailsEndpoint);
+    }
+
+    @Nullable
+    public String getNewUserEmailSuffix() {
+        return getProperty(ConfigKey.newUserEmailSuffix);
+    }
+
     @Nullable
     public String getClientId() {
         return getProperty(ConfigKey.clientId);

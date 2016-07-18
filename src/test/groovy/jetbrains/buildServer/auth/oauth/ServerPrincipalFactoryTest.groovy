@@ -1,5 +1,8 @@
 package jetbrains.buildServer.auth.oauth
 
+import com.beust.jcommander.internal.Lists
+import jetbrains.buildServer.serverSide.ServerSettings
+import jetbrains.buildServer.serverSide.auth.LoginConfiguration
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal
 import jetbrains.buildServer.users.InvalidUsernameException
 import jetbrains.buildServer.users.SUser
@@ -10,10 +13,14 @@ class ServerPrincipalFactoryTest extends Specification {
 
     UserModel userModel = Mock()
     SUser user = Mock()
+    List<String> userEmails = Lists.newArrayList();
     ServerPrincipalFactory principalFactory;
 
     def setup() {
-        principalFactory = new ServerPrincipalFactory(userModel)
+        principalFactory = new ServerPrincipalFactory(userModel, new AuthenticationSchemeProperties(Mock(ServerSettings),
+                Stub(LoginConfiguration) {
+                    allowMatchingUsersByEmail() >> true
+                }))
     }
 
     def "read user from model"() {
@@ -22,7 +29,7 @@ class ServerPrincipalFactoryTest extends Specification {
         user.getUsername() >> userName
         userModel.findUserByUsername(_,_) >> user
         when:
-        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, [:])
+        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, userEmails, [:])
         then:
         principal != null
         principal.name == userName
@@ -36,7 +43,7 @@ class ServerPrincipalFactoryTest extends Specification {
         def userName = "testUser"
         userModel.findUserByUsername(_,_) >> null
         when:
-        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, [:])
+        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, userEmails, [:])
         then:
         principal != null
         principal.name == userName
@@ -49,7 +56,7 @@ class ServerPrincipalFactoryTest extends Specification {
         def userName = "testUser"
         userModel.findUserByUsername(_,_) >> { throw new InvalidUsernameException("mocked reason") }
         when:
-        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, [:])
+        ServerPrincipal principal = principalFactory.getServerPrincipal(userName, userEmails, [:])
         then:
         principal != null
         principal.name == userName

@@ -5,7 +5,10 @@ public enum ConfigKey {
     authorizeEndpoint,
     tokenEndpoint,
     userEndpoint,
+    emailsEndpoint,
     clientId,
     clientSecret,
-    scope
+    scope,
+    newUserEmailSuffix,
+    allowMatchingUsersByEmail
 }

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 
@@ -89,7 +90,8 @@ public class OAuthAuthenticationScheme extends HttpAuthenticationSchemeAdapter {
             return sendBadRequest(response, "Marked request as unauthenticated since user endpoint does not return any login id");
         }
 
-        final ServerPrincipal principal = principalFactory.getServerPrincipal(userLogin, schemeProperties);
+        List<String> userEmails = authClient.getUserEmails(token);
+        final ServerPrincipal principal = principalFactory.getServerPrincipal(userLogin, userEmails, schemeProperties);
 
         LOG.debug("Request authenticated. Determined user " + principal.getName());
         return HttpAuthenticationResult.authenticated(principal, true);
